@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todos</title>
+</head>
+<body>
+    <header>
+        <h1>Todos</h1>
+        <input autofocus type="text" placeholder="What needs to be done?">
+    </header>
+    <section>
+        <input id="toggle-all" type="checkbox">
+        <label for="toggle-all">Mark all as completed</label>
+        <ol>
+            <li>
+                <div>
+                    <input type="checkbox">
+                    <label>Todo Item</label>
+                    <button>Remove Todo Item</button>
+                </div>
+                <!-- <input type="text" placeholder="Existing todo to edit"> -->
+            </li>
+        </ol>
+    </section>
+    <footer>
+        <span>
+            <strong>1</strong>
+            <span>item(s) left</span>
+        </span>
+        <ul>
+            <li>
+                <a href="#/all">All</a>
+            </li>
+            <li>
+                <a href="#/active">Active</a>
+            </li>
+            <li>
+                <a href="#/completed">Completed</a>
+            </li>
+        </ul>
+        <button>
+            Clear completed todos
+        </button>
+    </footer>
+</body>
+</html>
