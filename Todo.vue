@@ -20,6 +20,9 @@ export default {
     },
 
     computed: {
+        remaining() {
+            return this.todos.length;
+        }
     },
 
     // methods that implement data logic
@@ -34,7 +37,7 @@ export default {
             <h1>Todos</h1>
             <input autofocus class="new-todo" type="text" placeholder="What needs to be done?">
         </header>
-        <section class="main">
+        <section class="main" v-show="todos.length">
             <input class="toggle-all" id="toggle-all" type="checkbox" checked="false">
             <label for="toggle-all">Mark all as complete</label>
             <ul class="todo-list">
@@ -52,10 +55,10 @@ export default {
                 </li>
             </ul>
         </section>
-        <footer class="footer">
+        <footer class="footer" v-show="todos.length">
             <span class="todo-count">
-                <strong>1</strong>
-                <span>item left</span>
+                <strong>{{ remaining }}</strong>
+                <span>{{ remaining === 1 ? ' item' : ' items' }} left</span>
             </span>
             <ul class="filters">
                 <li>
