@@ -4,6 +4,13 @@ export default {
     
     // app initial state
     data: () => ({
+        todos: [
+            {
+                id: Date.now(),
+                title: 'Todo Item',
+                completed: false,
+            }
+        ]
     }),
 
     watch: {
@@ -36,7 +43,7 @@ export default {
                     <div class="view"> 
                         <!-- NOTE - change to toggle-done -->
                         <input class="toggle" type="checkbox">
-                        <label>Todo Item</label>
+                        <label>{{ todos[0].title }}</label>
                         <!-- NOTE: Change to remove-todo -->
                         <button class="destroy"></button>
                     </div>
