@@ -1,4 +1,11 @@
 <script>
+
+const filters = {
+    all: (todos) => todos,
+    active: (todos) => todos.filter((todo) => !todo.completed),
+    completed: (todos) => todos.filter((todo) => todo.completed)
+};
+
 export default {
     name: 'TodoApp',
     
@@ -10,23 +17,38 @@ export default {
                 title: 'Todo Item',
                 completed: false,
             }
-        ]
+        ],
+        visibility: 'all'
     }),
 
     watch: {
     },
 
     mounted() {
+        window.addEventListener('hashchange', this.onHashChange)
+        this.onHashChange()
     },
 
     computed: {
         remaining() {
             return this.todos.length;
+        },
+        filteredTodos() {
+            return filters[this.visibility](this.todos);
         }
     },
 
     // methods that implement data logic
     methods: {
+        onHashChange() {
+            var visibility = window.location.hash.replace(/#\/?/, '');
+            if (filters[visibility]) {
+                this.visibility = visibility;
+            } else {
+                window.location.hash = '';
+                this.visibility = 'all';
+            }
+        }
     }
 }
 </script>
@@ -41,11 +63,11 @@ export default {
             <input class="toggle-all" id="toggle-all" type="checkbox" checked="false">
             <label for="toggle-all">Mark all as complete</label>
             <ul class="todo-list">
-                <li class="todo-item">
+                <li v-for="todo in filteredTodos" :key="todo.id" class="todo-item" :class="{ completed: todo.completed }">
                     <!-- NOTE - change to view-todo -->
                     <div class="view"> 
                         <!-- NOTE - change to toggle-done -->
-                        <input class="toggle" type="checkbox">
+                        <input class="toggle" type="checkbox" v-model="todo.completed">
                         <label>{{ todos[0].title }}</label>
                         <!-- NOTE: Change to remove-todo -->
                         <button class="destroy"></button>
@@ -62,13 +84,13 @@ export default {
             </span>
             <ul class="filters">
                 <li>
-                    <a href="#/all">All</a>
+                    <a href="#/all" :class="{ selected: visibility === 'all' }">All</a>
                 </li>
                 <li>
-                    <a href="#/active">Active</a>
+                    <a href="#/active" :class="{ selected: visibility === 'active' }">Active</a>
                 </li>
                 <li>
-                    <a href="#/completed">Completed</a>
+                    <a href="#/completed" :class="{ selected: visibility === 'completed' }">Completed</a>
                 </li>
             </ul>
             <button class="clear-completed">
