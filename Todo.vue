@@ -11,19 +11,20 @@ export default {
     
     // app initial state
     data: () => ({
-        todos: [
-            {
-                id: Date.now(),
-                title: 'Todo Item',
-                completed: false,
-            }
-        ],
+        todos: JSON.parse(localStorage.getItem('todoappData') || '[]'),
         visibility: 'all',
         beforeEditCancel: null,
         editedTodo: null
     }),
 
+    // watch todos change for localStorage persistence
     watch: {
+        todos: {
+            handler(todos) {
+                localStorage.setItem('todoappData', JSON.stringify(todos))
+            },
+            deep: true
+        }
     },
 
     mounted() {
@@ -79,6 +80,18 @@ export default {
         editTodo(todo) {
             this.beforeEditCancel = todo.title;
             this.editedTodo = todo;
+        },
+        cancelEdit(todo) {
+            this.editedTodo = null
+            todo.title = this.beforeEditCancel
+        },
+        doneEdit(todo) {
+            this.editedTodo = null;
+            todo.title = todo.title.trim();
+            
+            if (!todo.title) {
+                this.removeTodo(todo);
+            }
         }
     }
 }
@@ -110,6 +123,9 @@ export default {
                         type="text"
                         v-model="todo.title"
                         @vnode-mounted="({ el }) => el.focus()"
+                        @keyup.escape="cancelEdit(todo)"
+                        @blur="doneEdit(todo)"
+                        @keyup.enter="doneEdit(todo)"
                     >
                 </li>
             </ul>
