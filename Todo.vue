@@ -18,7 +18,9 @@ export default {
                 completed: false,
             }
         ],
-        visibility: 'all'
+        visibility: 'all',
+        beforeEditCancel: null,
+        editedTodo: null
     }),
 
     watch: {
@@ -54,6 +56,29 @@ export default {
         },
         removeCompleted() {
             this.todos = filters.active(this.todos)
+        },
+        addTodo(event) {
+            // TODO: Add code here.
+            const value = event.target.value.trim();
+
+            if (!value) {
+                return;
+            }
+
+            this.todos.push({
+                id: Date.now(),
+                title: value,
+                isCompleted: false
+            });
+
+            event.target.value = ''
+        },
+        removeTodo(todo) {
+            this.todos.splice(this.todos.indexOf(todo), 1);
+        },
+        editTodo(todo) {
+            this.beforeEditCancel = todo.title;
+            this.editedTodo = todo;
         }
     }
 }
@@ -63,23 +88,29 @@ export default {
     <section class="todoapp">
         <header class="header">
             <h1>Todos</h1>
-            <input autofocus class="new-todo" type="text" placeholder="What needs to be done?">
+            <input autofocus class="new-todo" placeholder="What needs to be done?" @keyup.enter="addTodo">
         </header>
         <section class="main" v-show="todos.length">
             <input class="toggle-all" id="toggle-all" type="checkbox" :checked="remaining === 0" @change="toggleAll">
             <label for="toggle-all">Mark all as complete</label>
             <ul class="todo-list">
-                <li v-for="todo in filteredTodos" :key="todo.id" class="todo-item" :class="{ completed: todo.completed }">
+                <li v-for="todo in filteredTodos" :key="todo.id" class="todo-item" :class="{ completed: todo.completed, editing: todo === editedTodo }">
                     <!-- NOTE - change to view-todo -->
                     <div class="view"> 
                         <!-- NOTE - change to toggle-done -->
                         <input class="toggle" type="checkbox" v-model="todo.completed">
-                        <label>{{ todos[0].title }}</label>
+                        <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
                         <!-- NOTE: Change to remove-todo -->
-                        <button class="destroy"></button>
+                        <button class="destroy" @click="removeTodo(todo)"></button>
                     </div>
                     <!-- NOTE: Change to edit-todo -->
-                    <!-- <input class="edit" type="text" placeholder="Exiting todo to edit"> -->
+                    <input
+                        v-if="todo === editedTodo"
+                        class="edit"
+                        type="text"
+                        v-model="todo.title"
+                        @vnode-mounted="({ el }) => el.focus()"
+                    >
                 </li>
             </ul>
         </section>
