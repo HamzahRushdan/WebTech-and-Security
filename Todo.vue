@@ -48,6 +48,12 @@ export default {
                 window.location.hash = '';
                 this.visibility = 'all';
             }
+        },
+        toggleAll(e) {
+            this.todos.forEach((todo) => (todo.completed = e.target.checked))
+        },
+        removeCompleted() {
+            this.todos = filters.active(this.todos)
         }
     }
 }
@@ -60,7 +66,7 @@ export default {
             <input autofocus class="new-todo" type="text" placeholder="What needs to be done?">
         </header>
         <section class="main" v-show="todos.length">
-            <input class="toggle-all" id="toggle-all" type="checkbox" checked="false">
+            <input class="toggle-all" id="toggle-all" type="checkbox" :checked="remaining === 0" @change="toggleAll">
             <label for="toggle-all">Mark all as complete</label>
             <ul class="todo-list">
                 <li v-for="todo in filteredTodos" :key="todo.id" class="todo-item" :class="{ completed: todo.completed }">
@@ -93,7 +99,7 @@ export default {
                     <a href="#/completed" :class="{ selected: visibility === 'completed' }">Completed</a>
                 </li>
             </ul>
-            <button class="clear-completed">
+            <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
                 Clear completed todos
             </button>
         </footer>
